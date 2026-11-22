@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CHRONOVA — Premium Interactive Digital Clock & Dynamic Wallpaper</title>
+  
+  <meta name="description" content="CHRONOVA is a production-quality, premium digital clock and dynamic wallpaper experience. Created By Shiv Yogi.">
+  <meta name="author" content="Shiv Yogi">
+  <meta name="theme-color" content="#07080e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CHRONOVA">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.svg">
+
+  <!-- Typography & CSS Modules -->
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/glass.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/desktop.css">
+</head>
+<body>
+  <div id="app-root" class="theme-matrix">
+    
+    <!-- WALLPAPER & AMBIENT LAYERS -->
+    <div id="wallpaper-layer">
+      <canvas id="wallpaper-canvas"></canvas>
+      <div id="custom-wallpaper-container">
+        <img id="custom-wallpaper-img" alt="Custom Wallpaper" style="display:none;">
+        <video id="custom-wallpaper-video" autoplay loop muted playsinline style="display:none;"></video>
+      </div>
+    </div>
+    
+    <div class="ambient-glow-layer"></div>
+    <div class="glass-overlay"></div>
+
+    <!-- MAIN INTERACTIVE STAGE -->
+    <main id="stage">
+      
+      <!-- TOP STATUS BAR -->
+      <header id="top-bar">
+        <div class="brand-badge" title="Created By Shiv Yogi — Click to customize branding">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>
+          <span>CHRONOVA</span>
+        </div>
+
+        <div class="top-actions">
+          <div id="wake-lock-status-badge" class="glass-pill-btn" style="width: auto; padding: 0 12px; font-size: 0.72rem; font-weight: 600; border-radius: 999px;">
+            AOD: Active
+          </div>
+          <button id="fullscreen-toggle-btn" class="glass-pill-btn" title="Toggle Fullscreen (Press F)">
+            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- CENTER CLOCK PRESENTATION -->
+      <section id="clock-presentation">
+        <div id="clock-container" title="Double-tap to change font · Long-press digit to edit color">
+          <!-- Hours -->
+          <div id="hours-group" class="time-group">
+            <span id="digit-h1" class="digit-slot" title="Hour 1">1</span>
+            <span id="digit-h2" class="digit-slot" title="Hour 2">2</span>
+          </div>
+
+          <!-- Colon 1 -->
+          <span id="colon-1" class="colon-slot colon-pulse">:</span>
+
+          <!-- Minutes -->
+          <div id="minutes-group" class="time-group">
+            <span id="digit-m1" class="digit-slot" title="Minute 1">0</span>
+            <span id="digit-m2" class="digit-slot" title="Minute 2">0</span>
+          </div>
+
+          <!-- Colon 2 -->
+          <span id="colon-2" class="colon-slot colon-pulse">:</span>
+
+          <!-- Seconds -->
+          <div id="seconds-group" class="time-group">
+            <span id="digit-s1" class="digit-slot" title="Second 1">0</span>
+            <span id="digit-s2" class="digit-slot" title="Second 2">0</span>
+          </div>
+
+          <!-- AM/PM Indicator -->
+          <span id="ampm-indicator">AM</span>
+        </div>
+
+        <!-- Portrait Suggestion Pill -->
+        <div id="portrait-hint-pill">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4v16M2 12h20" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>Tap to Enter Fullscreen Landscape</span>
+        </div>
+      </section>
+
+      <!-- WIDGET CAROUSEL & DATE AREA -->
+      <section id="widget-presentation" title="Double-tap or swipe to switch widgets">
+        <div id="widget-carousel">
+          
+          <!-- 1. Full Date Widget -->
+          <div id="widget-date" class="widget-card active">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+            <span id="widget-date-text">Loading Date...</span>
+          </div>
+
+          <!-- 2. Week & Year Info -->
+          <div id="widget-week-info" class="widget-card">
+            <svg viewBox="0 0 24 24"><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/></svg>
+            <span id="widget-week-text">Week Info</span>
+          </div>
+
+          <!-- 3. Timezone & UTC Offset -->
+          <div id="widget-timezone" class="widget-card">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            <span id="widget-timezone-text">Timezone</span>
+          </div>
+
+          <!-- 4. World Clock -->
+          <div id="widget-world-clock" class="widget-card">
+            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="widget-world-clock-text">World Clock</span>
+          </div>
+
+          <!-- 5. Interactive Stopwatch -->
+          <div id="widget-stopwatch" class="widget-card">
+            <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+            <span id="stopwatch-time-display" style="font-family: var(--font-space-mono); font-weight:700;">00:00.00</span>
+            <div style="display:flex; gap: 6px; margin-left: 8px;">
+              <button id="stopwatch-start-btn" class="glass-btn glass-btn-primary" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">Start</button>
+              <button id="stopwatch-lap-btn" class="glass-btn glass-btn-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">Lap</button>
+              <button id="stopwatch-reset-btn" class="glass-btn glass-btn-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">Reset</button>
+            </div>
+            <div id="stopwatch-laps-list" style="display:none;"></div>
+          </div>
+
+          <!-- 6. Interactive Countdown Timer -->
+          <div id="widget-timer" class="widget-card">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/></svg>
+            <span id="timer-time-display" style="font-family: var(--font-space-mono); font-weight:700;">05:00</span>
+            <div style="display:flex; gap: 4px; margin-left: 6px;">
+              <span class="timer-preset-pill active" data-seconds="300" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; background: rgba(255,255,255,0.1); cursor:pointer;">5m</span>
+              <span class="timer-preset-pill" data-seconds="600" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; background: rgba(255,255,255,0.1); cursor:pointer;">10m</span>
+              <span class="timer-preset-pill" data-seconds="1500" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; background: rgba(255,255,255,0.1); cursor:pointer;">25m</span>
+            </div>
+            <button id="timer-start-btn" class="glass-btn glass-btn-primary" style="padding: 0.2rem 0.6rem; font-size: 0.72rem; margin-left: 6px;">Start</button>
+            <button id="timer-reset-btn" class="glass-btn glass-btn-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">Reset</button>
+          </div>
+
+          <!-- 7. Battery Widget -->
+          <div id="widget-battery" class="widget-card">
+            <svg viewBox="0 0 24 24"><path d="M17 5v2h2c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H5c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1h2V5h10zm-4 4h-2v4H9l4 5v-4h2l-4-5z"/></svg>
+            <span id="widget-battery-text">Battery: 100%</span>
+          </div>
+
+          <!-- 8. Weather Widget -->
+          <div id="widget-weather" class="widget-card">
+            <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg>
+            <span id="widget-weather-text">Weather: Loading...</span>
+          </div>
+
+          <!-- 9. SPECIAL CREATOR BRANDING WIDGET -->
+          <div id="widget-branding" class="widget-card branding-anim-slide">
+            <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6.4-4.8-6.4 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
+            <span id="creator-branding-text" class="branding-text-shiv-yogi branding-typo-1">Created By Shiv Yogi</span>
+          </div>
+
+        </div>
+
+        <!-- Widget Indicator Dots -->
+        <div id="widget-indicators" class="widget-indicators"></div>
+      </section>
+
+      <!-- BOTTOM BAR & KEYBOARD SHORTCUTS -->
+      <footer id="bottom-bar">
+        <div class="bottom-info">
+          <span>Created By Shiv Yogi</span>
+        </div>
+
+        <div class="desktop-shortcuts-bar">
+          <span><span class="shortcut-key">F</span>Fullscreen</span>
+          <span><span class="shortcut-key">S</span>Settings</span>
+          <span><span class="shortcut-key">Space</span>Pause</span>
+          <span><span class="shortcut-key">R</span>Font</span>
+          <span><span class="shortcut-key">←</span><span class="shortcut-key">→</span>Widgets</span>
+        </div>
+      </footer>
+
+      <!-- FLOATING SETTINGS SHORTCUT BUTTON -->
+      <button id="floating-settings-btn" title="Open Settings (Press S or Two-Finger Tap)">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      </button>
+
+    </main>
+
+    <!-- INITIAL ONBOARDING OVERLAY (NO SKIP BUTTON) -->
+    <div id="onboarding-overlay" class="modal-overlay">
+      <div class="onboarding-card anim-elastic-reveal">
+        <div id="onboarding-step-counter" class="onboarding-step-counter">Instruction 1 of 7</div>
+        <div id="onboarding-icon-wrap" class="onboarding-icon-wrapper">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        </div>
+        <h2 id="onboarding-title" class="onboarding-title">Welcome to CHRONOVA</h2>
+        <p id="onboarding-desc" class="onboarding-desc">Explore the master digital clock experience.</p>
+        <button id="onboarding-gotit-btn" class="onboarding-action-btn">Got It</button>
+      </div>
+    </div>
+
+    <!-- INDIVIDUAL DIGIT COLOR EDITOR MODAL -->
+    <div id="digit-color-modal" class="modal-overlay">
+      <div class="glass-panel modal-card">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.23 19.59 10.56 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+            <span>Digit Color Editor</span>
+          </div>
+          <button id="close-digit-modal-btn" class="modal-close-btn" title="Close"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Target Digit Selector -->
+          <div class="setting-label">
+            <span class="setting-name">Select Target Slot</span>
+            <span class="setting-desc">Assign different colors to identical digits across clock positions</span>
+          </div>
+          <div class="digit-target-selector">
+            <button class="digit-target-pill active" data-target="h1">H1</button>
+            <button class="digit-target-pill" data-target="h2">H2</button>
+            <button class="digit-target-pill" data-target="colon1">:</button>
+            <button class="digit-target-pill" data-target="m1">M1</button>
+            <button class="digit-target-pill" data-target="m2">M2</button>
+            <button class="digit-target-pill" data-target="colon2">:</button>
+            <button class="digit-target-pill" data-target="s1">S1</button>
+            <button class="digit-target-pill" data-target="s2">S2</button>
+            <button class="digit-target-pill" data-target="ampm">AM</button>
+          </div>
+
+          <!-- Color Live Preview Box -->
+          <div class="color-preview-box">
+            <div class="color-preview-sample">
+              <div id="color-swatch-large" class="color-swatch-large" style="background:#ffffff;"></div>
+              <div>
+                <span id="digit-hex-label" class="color-hex-label">#FFFFFF</span>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Selected Color</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="text" id="digit-hex-input" class="glass-select" style="width:105px; text-transform:uppercase; font-family:var(--font-space-mono);" value="#FFFFFF" maxlength="7">
+              <input type="color" id="native-color-picker" value="#ffffff" style="width:36px; height:36px; border:none; background:transparent; cursor:pointer;">
+            </div>
+          </div>
+
+          <!-- 16 Curated Presets -->
+          <div class="setting-label">
+            <span class="setting-name">Curated Neon & Luxury Presets</span>
+          </div>
+          <div id="color-presets-grid" class="color-presets-grid"></div>
+
+          <!-- Apply to Matching Digits Option -->
+          <div class="setting-row" style="margin-top:0.5rem;">
+            <div class="setting-label">
+              <span class="setting-name">Apply to All Matching Digits</span>
+              <span class="setting-desc">Synchronize color across identical digit values</span>
+            </div>
+            <label class="switch-wrapper">
+              <input type="checkbox" id="apply-matching-digits-checkbox">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="reset-single-digit-btn" class="glass-btn glass-btn-secondary">Reset Digit</button>
+          <button id="reset-all-digits-btn" class="glass-btn glass-btn-danger">Reset All Digits</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK CONTROLS DRAWER (Swipe Down) -->
+    <div id="quick-controls-drawer">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; max-width:900px; margin: 0 auto 1rem auto;">
+        <span style="font-size:0.9rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.05em;">QUICK ACTION CONTROLS</span>
+        <button id="close-quick-drawer-btn" class="modal-close-btn"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+      </div>
+      <div class="quick-controls-grid">
+        <button id="quick-btn-fullscreen" class="quick-btn">
+          <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          <span>Fullscreen</span>
+        </button>
+        <button id="quick-btn-theme" class="quick-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.23 19.59 10.56 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z"/></svg>
+          <span>Cycle Wallpaper</span>
+        </button>
+        <button id="quick-btn-power" class="quick-btn">
+          <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+          <span>Low Power</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- QUICK BRIGHTNESS MODAL (Swipe Up) -->
+    <div id="quick-brightness-modal">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <span style="font-size:0.85rem; font-weight:700; color:#fff;">Display Brightness</span>
+        <button id="close-brightness-modal-btn" class="modal-close-btn" style="width:26px; height:26px;"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+      </div>
+      <input type="range" id="quick-brightness-slider" class="glass-range" min="10" max="150" value="100">
+    </div>
+
+    <!-- QUICK APPEARANCE MODAL (Clock Long-press) -->
+    <div id="appearance-modal" class="modal-overlay">
+      <div class="glass-panel modal-card" style="width:min(90vw, 420px);">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.23 19.59 10.56 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z"/></svg>
+            <span>Clock Appearance</span>
+          </div>
+          <button class="modal-close-btn" onclick="document.getElementById('appearance-modal').classList.remove('active');"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-row">
+            <div class="setting-label">
+              <span class="setting-name">Minimal Mode</span>
+              <span class="setting-desc">Clean digits only</span>
+            </div>
+            <button class="glass-btn glass-btn-primary" onclick="const s = window.storageEngine; const m = !s.get('minimalMode'); s.set('minimalMode', m); window.clockEngine.applyClockLayout(); this.textContent = m ? 'Disable' : 'Enable';">Toggle</button>
+          </div>
+          <div class="setting-row" style="margin-top:0.75rem;">
+            <div class="setting-label">
+              <span class="setting-name">Cycle Clock Font</span>
+              <span class="setting-desc">10+ high-tech typographies</span>
+            </div>
+            <button class="glass-btn glass-btn-secondary" onclick="window.clockEngine.cycleFont();">Next Font</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK WALLPAPER MODAL (Two-Finger Long-Press) -->
+    <div id="wallpaper-modal" class="modal-overlay">
+      <div class="glass-panel modal-card" style="width:min(94vw, 560px);">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg viewBox="0 0 24 24"><path d="M4 4h7V2H4c-1.1 0-2 .9-2 2v7h2V4zm6 9l-4 5h12l-3-4-2.03 2.71L10 13zm10-9h-7v2h7v7h2V4c0-1.1-.9-2-2-2zm0 16h-7v2h7c1.1 0 2-.9 2-2v-7h-2v7zM4 13H2v7c0 1.1.9 2 2 2h7v-2H4v-7z"/></svg>
+            <span>Wallpaper Themes</span>
+          </div>
+          <button class="modal-close-btn" onclick="document.getElementById('wallpaper-modal').classList.remove('active');"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-group-title">Dynamic Themes with Integrated Clock</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:8px;">
+            <button class="glass-btn glass-btn-secondary" onclick="window.storageEngine.set('wallpaperCategory', 'dynamic'); window.storageEngine.set('activeDynamicWallpaper', 'matrix'); window.wallpaperEngine.applyWallpaperSettings(); document.getElementById('wallpaper-modal').classList.remove('active');">Cyber Matrix</button>
+            <button class="glass-btn glass-btn-secondary" onclick="window.storageEngine.set('wallpaperCategory', 'dynamic'); window.storageEngine.set('activeDynamicWallpaper', 'neon-horizon'); window.wallpaperEngine.applyWallpaperSettings(); document.getElementById('wallpaper-modal').classList.remove('active');">Neon Horizon</button>
+            <button class="glass-btn glass-btn-secondary" onclick="window.storageEngine.set('wallpaperCategory', 'dynamic'); window.storageEngine.set('activeDynamicWallpaper', 'aurora'); window.wallpaperEngine.applyWallpaperSettings(); document.getElementById('wallpaper-modal').classList.remove('active');">Aurora</button>
+            <button class="glass-btn glass-btn-secondary" onclick="window.storageEngine.set('wallpaperCategory', 'dynamic'); window.storageEngine.set('activeDynamicWallpaper', 'minimal-void'); window.wallpaperEngine.applyWallpaperSettings(); document.getElementById('wallpaper-modal').classList.remove('active');">Minimal Void</button>
+            <button class="glass-btn glass-btn-secondary" onclick="window.storageEngine.set('wallpaperCategory', 'dynamic'); window.storageEngine.set('activeDynamicWallpaper', 'deep-ocean'); window.wallpaperEngine.applyWallpaperSettings(); document.getElementById('wallpaper-modal').classList.remove('active');">Deep Ocean</button>
+            <button class="glass-btn glass-btn-secondary" onclick="window.storageEngine.set('wallpaperCategory', 'dynamic'); window.storageEngine.set('activeDynamicWallpaper', 'celestial'); window.wallpaperEngine.applyWallpaperSettings(); document.getElementById('wallpaper-modal').classList.remove('active');">Celestial</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULL SETTINGS MODAL (15 Categories) -->
+    <div id="settings-modal" class="modal-overlay">
+      <div class="glass-panel modal-card">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            <span>CHRONOVA Settings & Customization</span>
+          </div>
+          <button id="close-settings-btn" class="modal-close-btn"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        </div>
+
+        <div class="settings-layout">
+          <!-- 15 Sidebar Category Tabs -->
+          <aside class="settings-sidebar">
+            <button class="settings-tab-btn active" data-tab="clock"><span>Clock Settings</span></button>
+            <button class="settings-tab-btn" data-tab="appearance"><span>Appearance</span></button>
+            <button class="settings-tab-btn" data-tab="colors"><span>Digit Colors</span></button>
+            <button class="settings-tab-btn" data-tab="rgb"><span>RGB Engine</span></button>
+            <button class="settings-tab-btn" data-tab="fonts"><span>Typography</span></button>
+            <button class="settings-tab-btn" data-tab="wallpapers"><span>Dynamic Wallpapers</span></button>
+            <button class="settings-tab-btn" data-tab="live"><span>Live Wallpapers</span></button>
+            <button class="settings-tab-btn" data-tab="custom-wall"><span>Custom Media</span></button>
+            <button class="settings-tab-btn" data-tab="animations"><span>Animations (25)</span></button>
+            <button class="settings-tab-btn" data-tab="widgets"><span>Widgets & Branding</span></button>
+            <button class="settings-tab-btn" data-tab="display"><span>Display & Layout</span></button>
+            <button class="settings-tab-btn" data-tab="aod"><span>Always On (AOD)</span></button>
+            <button class="settings-tab-btn" data-tab="performance"><span>Performance</span></button>
+            <button class="settings-tab-btn" data-tab="gestures"><span>Gestures</span></button>
+            <button class="settings-tab-btn" data-tab="privacy"><span>Privacy & Backup</span></button>
+          </aside>
+
+          <!-- Settings Content Area -->
+          <div class="settings-content-area">
+            
+            <!-- 1. Clock Settings Panel -->
+            <div id="settings-panel-clock" class="settings-panel-section active">
+              <div class="setting-group">
+                <div class="setting-group-title">Time Format & Display</div>
+                
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">12-Hour Format</span>
+                    <span class="setting-desc">Switch between 12-hour (with AM/PM) and 24-hour military format</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-hour12">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Show Seconds</span>
+                    <span class="setting-desc">Toggle display of live seconds digits</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-show-seconds">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Colon Separator Animation</span>
+                    <span class="setting-desc">Style of the blinking colons</span>
+                  </div>
+                  <select id="set-colon-style" class="glass-select">
+                    <option value="pulse">Smooth Pulse</option>
+                    <option value="blink">Hard Blink</option>
+                    <option value="solid">Solid (No Blink)</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Digit Transition Style</span>
+                    <span class="setting-desc">Visual animation when clock numbers change</span>
+                  </div>
+                  <select id="set-clock-transition" class="glass-select">
+                    <option value="slide">Slide Roll</option>
+                    <option value="flip">3D Flip Card</option>
+                    <option value="fade">Smooth Fade</option>
+                    <option value="glow">Neon Glow Burst</option>
+                    <option value="scale">Spring Scale</option>
+                    <option value="minimal">Minimal (Instant)</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Clock Position</span>
+                    <span class="setting-desc">Vertical alignment on screen</span>
+                  </div>
+                  <select id="set-clock-position" class="glass-select">
+                    <option value="center">Centered</option>
+                    <option value="top">Elevated Top</option>
+                    <option value="bottom">Lowered Bottom</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Minimal Mode</span>
+                    <span class="setting-desc">Hide all UI chrome for an ultra-clean clock view</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-minimal-mode">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Manual Timezone</span>
+                    <span class="setting-desc">Automatic detection or manual world timezone</span>
+                  </div>
+                  <select id="set-timezone" class="glass-select">
+                    <option value="auto">Auto-Detect Local Timezone</option>
+                    <option value="UTC">UTC (Coordinated Universal Time)</option>
+                    <option value="America/New_York">New York (EST/EDT)</option>
+                    <option value="America/Los_Angeles">Los Angeles (PST/PDT)</option>
+                    <option value="Europe/London">London (GMT/BST)</option>
+                    <option value="Europe/Paris">Paris (CET/CEST)</option>
+                    <option value="Asia/Tokyo">Tokyo (JST)</option>
+                    <option value="Asia/Dubai">Dubai (GST)</option>
+                    <option value="Asia/Kolkata">India / Kolkata (IST)</option>
+                    <option value="Australia/Sydney">Sydney (AEST)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Appearance Panel -->
+            <div id="settings-panel-appearance" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Glassmorphism & Typography Adjustments</div>
+                
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Clock Font Size</span>
+                    <span id="lbl-font-size" class="slider-val">14vw</span>
+                  </div>
+                  <input type="range" id="set-font-size" class="glass-range" min="6" max="22" step="0.5" value="14">
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Font Weight</span>
+                    <span id="lbl-font-weight" class="slider-val">700</span>
+                  </div>
+                  <input type="range" id="set-font-weight" class="glass-range" min="200" max="900" step="100" value="700">
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Letter Spacing</span>
+                    <span id="lbl-letter-spacing" class="slider-val">0.04em</span>
+                  </div>
+                  <input type="range" id="set-letter-spacing" class="glass-range" min="-0.04" max="0.25" step="0.01" value="0.04">
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Wallpaper Frosted Blur</span>
+                    <span id="lbl-blur" class="slider-val">0px</span>
+                  </div>
+                  <input type="range" id="set-blur" class="glass-range" min="0" max="40" step="1" value="0">
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Wallpaper Brightness</span>
+                    <span id="lbl-brightness" class="slider-val">100%</span>
+                  </div>
+                  <input type="range" id="set-brightness" class="glass-range" min="10" max="150" step="5" value="100">
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Wallpaper Opacity</span>
+                    <span id="lbl-opacity" class="slider-val">100%</span>
+                  </div>
+                  <input type="range" id="set-opacity" class="glass-range" min="10" max="100" step="5" value="100">
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Digit Colors Panel -->
+            <div id="settings-panel-colors" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Individual Digit Customizer</div>
+                <p class="setting-desc">Every digit of the clock (H1, H2, M1, M2, S1, S2, Colons, AM/PM) can have its own independent color.</p>
+                <div style="margin-top: 1rem;">
+                  <button class="glass-btn glass-btn-primary" onclick="window.settingsEngine.closeSettings(); window.colorEngine.openModal('h1');">Launch Color Studio Modal</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. RGB Customization Panel -->
+            <div id="settings-panel-rgb" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Dynamic RGB Lighting Engine</div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Enable RGB Mode</span>
+                    <span class="setting-desc">Override static colors with continuous dynamic RGB spectrum</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-rgb-mode">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">RGB Animation Mode</span>
+                    <span class="setting-desc">Color spectrum cycling style</span>
+                  </div>
+                  <select id="set-rgb-style" class="glass-select">
+                    <option value="rainbow">Rainbow Spectrum Flow</option>
+                    <option value="smooth">Smooth Color Cycle</option>
+                    <option value="breathing">Breathing Glow</option>
+                    <option value="gradient">Multi-Gradient Wave</option>
+                    <option value="neon">Neon Cyber Pulse</option>
+                    <option value="random">Random Transitions</option>
+                  </select>
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Animation Speed</span>
+                    <span id="lbl-rgb-speed" class="slider-val">1x</span>
+                  </div>
+                  <input type="range" id="set-rgb-speed" class="glass-range" min="0.2" max="3" step="0.1" value="1">
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Color Change Interval</span>
+                    <span class="setting-desc">Periodic color step transitions</span>
+                  </div>
+                  <select id="set-rgb-interval" class="glass-select">
+                    <option value="continuous">Continuous Smooth Flow</option>
+                    <option value="1m">Every 1 Minute</option>
+                    <option value="2m">Every 2 Minutes</option>
+                    <option value="5m">Every 5 Minutes</option>
+                    <option value="10m">Every 10 Minutes</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Per-Digit Phase Wave</span>
+                    <span class="setting-desc">Offset hue per digit to create an undulating wave across the clock</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-rgb-wave">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Fonts Panel -->
+            <div id="settings-panel-fonts" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">10+ Premium Clock Typographies</div>
+                <div id="fonts-selector-grid" class="font-grid"></div>
+              </div>
+            </div>
+
+            <!-- 6. Dynamic Wallpapers Panel -->
+            <div id="settings-panel-wallpapers" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">12 Dynamic Themes with Integrated Clock Styling</div>
+                <div id="dynamic-wallpapers-grid" class="wallpaper-grid"></div>
+              </div>
+            </div>
+
+            <!-- 7. Live Wallpapers Panel -->
+            <div id="settings-panel-live" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">10 Live Canvas Shader & Particle Themes</div>
+                <div id="live-wallpapers-grid" class="wallpaper-grid"></div>
+              </div>
+            </div>
+
+            <!-- 8. Custom Media Panel -->
+            <div id="settings-panel-custom-wall" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Local Custom Media (Images & Videos)</div>
+                <p class="setting-desc">Stored safely in local IndexedDB. Never uploaded to any external server.</p>
+
+                <div style="margin-top: 0.75rem;">
+                  <label class="glass-btn glass-btn-primary" style="cursor:pointer;">
+                    Choose Image or Video
+                    <input type="file" id="custom-wallpaper-file-input" accept="image/*,video/*" style="display:none;">
+                  </label>
+                  <button id="remove-custom-wallpaper-btn" class="glass-btn glass-btn-danger" style="margin-left:8px;">Restore Default Wallpaper</button>
+                </div>
+
+                <div class="setting-row" style="margin-top: 1rem;">
+                  <div class="setting-label">
+                    <span class="setting-name">Mute Video Audio</span>
+                    <span class="setting-desc">Video wallpapers autoplay muted by default for browser compliance</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-video-muted" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Video Volume</span>
+                    <span id="lbl-video-volume" class="slider-val">50%</span>
+                  </div>
+                  <input type="range" id="set-video-volume" class="glass-range" min="0" max="100" value="50">
+                </div>
+              </div>
+            </div>
+
+            <!-- 9. Animations Gallery Panel -->
+            <div id="settings-panel-animations" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">25 Polished Animation Suite</div>
+                <p class="setting-desc">Tap "Test Demo" to inspect any of the 25 hand-crafted micro-interactions live.</p>
+                <div id="animations-gallery-grid" style="display:flex; flex-direction:column; gap:8px; margin-top:0.75rem;"></div>
+              </div>
+            </div>
+
+            <!-- 10. Widgets & Branding Panel -->
+            <div id="settings-panel-widgets" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Special Creator Branding Widget</div>
+                <p class="setting-desc">Customization for <strong>Created By Shiv Yogi</strong> widget showcase.</p>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Auto Alternate Branding</span>
+                    <span class="setting-desc">Display date for 5s, slide into branding for 5s, and return</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-branding-auto" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Alternation Interval</span>
+                    <span id="lbl-branding-duration" class="slider-val">5s</span>
+                  </div>
+                  <input type="range" id="set-branding-duration" class="glass-range" min="3" max="15" step="1" value="5">
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">12 Branding Animation Styles</span>
+                  </div>
+                  <select id="set-branding-anim" class="glass-select">
+                    <option value="slide">1. Slide In Flare</option>
+                    <option value="zoom">2. Zoom Scale</option>
+                    <option value="glow-pulse">3. Glow Pulse</option>
+                    <option value="matrix">4. Matrix Decrypt</option>
+                    <option value="neon">5. Neon Sign Flicker</option>
+                    <option value="flip3d">6. 3D Perspective Flip</option>
+                    <option value="liquid-wave">7. Liquid Wave</option>
+                    <option value="shimmer">8. Cyber Shimmer</option>
+                    <option value="stagger">9. Elastic Stagger</option>
+                    <option value="minimal-fade">10. Minimal Fade</option>
+                    <option value="bounce">11. Kinetic Bounce</option>
+                    <option value="cyberscan">12. Laser Cyber Scan</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">12 Typography Combinations</span>
+                  </div>
+                  <select id="set-branding-typo" class="glass-select">
+                    <option value="1">1. Orbitron Cyber (Uppercase Bold)</option>
+                    <option value="2">2. Montserrat Modern Luxury</option>
+                    <option value="3">3. Rajdhani High-Tech</option>
+                    <option value="4">4. Syncopate Ultra-Wide Monolith</option>
+                    <option value="5">5. Bebas Neue Condensed</option>
+                    <option value="6">6. Share Tech Terminal</option>
+                    <option value="7">7. Chakra Petch Cyberpunk</option>
+                    <option value="8">8. Audiowide Synth</option>
+                    <option value="9">9. Space Monospace</option>
+                    <option value="10">10. JetBrains Bold Code</option>
+                    <option value="11">11. Gold Foil Luxury Sheen</option>
+                    <option value="12">12. Holographic Rainbow Liquid</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 11. Display & Layout Panel -->
+            <div id="settings-panel-display" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Display & Screen Orientation</div>
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Toggle Fullscreen Mode</span>
+                    <span class="setting-desc">Maximize display area and request landscape locking</span>
+                  </div>
+                  <button class="glass-btn glass-btn-primary" onclick="window.fullscreenEngine.toggleFullscreen();">Toggle Fullscreen</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 12. Always On Display Panel -->
+            <div id="settings-panel-aod" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Always On Display & Screen Wake Lock</div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Screen Wake Lock</span>
+                    <span class="setting-desc">Keep screen illuminated using browser Screen Wake Lock API</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-wakelock" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Wake Lock Duration</span>
+                  </div>
+                  <select id="set-wakelock-duration" class="glass-select">
+                    <option value="unlimited">Continuous / Unlimited</option>
+                    <option value="15m">15 Minutes</option>
+                    <option value="30m">30 Minutes</option>
+                    <option value="1h">1 Hour</option>
+                    <option value="2h">2 Hours</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Dim Display on Inactivity</span>
+                    <span class="setting-desc">Automatically dims screen brightness during idle periods</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-dim-idle">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">OLED Anti-Burn-In Drift</span>
+                    <span class="setting-desc">Imperceptibly shifts clock coordinates every few minutes to protect OLED displays</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-burnin-drift" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 13. Performance Panel -->
+            <div id="settings-panel-performance" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Performance & Audio Tuning</div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Low Power Mode</span>
+                    <span class="setting-desc">Throttles canvas particles and locks rendering to 30 FPS to conserve battery</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-low-power">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Canvas Target Frame Rate</span>
+                  </div>
+                  <select id="set-fps-limit" class="glass-select">
+                    <option value="60">60 FPS (Silky Smooth)</option>
+                    <option value="30">30 FPS (Energy Efficient)</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Sound Feedback</span>
+                    <span class="setting-desc">Web Audio synthesized haptic audio for button taps & alarms</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-sound-enabled" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Sound Volume</span>
+                    <span id="lbl-sound-volume" class="slider-val">60%</span>
+                  </div>
+                  <input type="range" id="set-sound-volume" class="glass-range" min="0" max="100" value="60">
+                </div>
+              </div>
+            </div>
+
+            <!-- 14. Gestures Panel -->
+            <div id="settings-panel-gestures" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Gesture Sensitivity & Shortcuts</div>
+
+                <div class="glass-slider-row">
+                  <div class="slider-header">
+                    <span>Swipe Sensitivity</span>
+                    <span id="lbl-gesture-sensitivity" class="slider-val">1x</span>
+                  </div>
+                  <input type="range" id="set-gesture-sensitivity" class="glass-range" min="0.5" max="2" step="0.1" value="1">
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-label">
+                    <span class="setting-name">Two-Finger Gestures</span>
+                    <span class="setting-desc">Tap for settings, long-press for wallpapers</span>
+                  </div>
+                  <label class="switch-wrapper">
+                    <input type="checkbox" id="set-two-finger-gestures" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                  <button id="replay-tutorial-btn" class="glass-btn glass-btn-secondary">Replay Gesture Tutorial</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 15. Privacy & Storage Panel -->
+            <div id="settings-panel-privacy" class="settings-panel-section">
+              <div class="setting-group">
+                <div class="setting-group-title">Privacy Guarantee & Data Management</div>
+                <p class="setting-desc">CHRONOVA is completely private and runs 100% locally. Zero trackers, zero cookies, zero external server uploads.</p>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:1rem;">
+                  <button id="export-settings-btn" class="glass-btn glass-btn-primary">Export Settings (JSON)</button>
+                  <label class="glass-btn glass-btn-secondary" style="cursor:pointer;">
+                    Import Settings (JSON)
+                    <input type="file" id="import-settings-file-input" accept=".json" style="display:none;">
+                  </label>
+                  <button id="reset-all-settings-btn" class="glass-btn glass-btn-danger">Factory Reset All Settings</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT MODULES -->
+  <script src="js/storage-engine.js"></script>
+  <script src="js/color-engine.js"></script>
+  <script src="js/animation-engine.js"></script>
+  <script src="js/wallpaper-engine.js"></script>
+  <script src="js/clock-engine.js"></script>
+  <script src="js/widget-engine.js"></script>
+  <script src="js/gesture-engine.js"></script>
+  <script src="js/fullscreen-engine.js"></script>
+  <script src="js/settings-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

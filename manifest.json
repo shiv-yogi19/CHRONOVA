@@ -1,0 +1,25 @@
+{
+  "name": "CHRONOVA - Premium Digital Clock",
+  "short_name": "CHRONOVA",
+  "description": "Premium Interactive Digital Clock & Dynamic Wallpaper Experience. Created By Shiv Yogi.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07080e",
+  "theme_color": "#07080e",
+  "categories": ["utilities", "lifestyle", "personalization"],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
