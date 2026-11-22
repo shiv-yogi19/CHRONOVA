@@ -1,0 +1,259 @@
+/**
+ * CHRONOVA - 25 Polished Animations & Clock Digit Transitions
+ * Created By Shiv Yogi
+ */
+
+/* 1. Fade Reveal */
+@keyframes animFadeReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.anim-fade-reveal { animation: animFadeReveal 0.6s var(--ease-smooth) forwards; }
+
+/* 2. Slide Up */
+@keyframes animSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.anim-slide-up { animation: animSlideUp 0.5s var(--ease-spring) forwards; }
+
+/* 3. Flip Digit */
+@keyframes animFlipDigit {
+  0% { transform: rotateX(0deg); }
+  50% { transform: rotateX(-90deg); opacity: 0.4; }
+  51% { transform: rotateX(90deg); opacity: 0.4; }
+  100% { transform: rotateX(0deg); opacity: 1; }
+}
+.anim-flip-digit { animation: animFlipDigit 0.45s ease-in-out; }
+
+/* 4. Scale Reveal */
+@keyframes animScaleReveal {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+.anim-scale-reveal { animation: animScaleReveal 0.5s var(--ease-spring) forwards; }
+
+/* 5. Blur Reveal */
+@keyframes animBlurReveal {
+  from { opacity: 0; filter: blur(20px); transform: scale(1.05); }
+  to { opacity: 1; filter: blur(0px); transform: scale(1); }
+}
+.anim-blur-reveal { animation: animBlurReveal 0.7s var(--ease-smooth) forwards; }
+
+/* 6. Liquid Transition */
+@keyframes animLiquidTransition {
+  0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}
+.anim-liquid-transition { animation: animLiquidTransition 8s infinite ease-in-out; }
+
+/* 7. RGB Flow */
+@keyframes animRGBFlow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+.anim-rgb-flow { animation: animRGBFlow 6s linear infinite; }
+
+/* 8. Glow Pulse */
+@keyframes animGlowPulse {
+  0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+  50% { text-shadow: 0 0 25px currentColor, 0 0 50px currentColor, 0 0 75px currentColor; }
+}
+.anim-glow-pulse { animation: animGlowPulse 2.5s ease-in-out infinite; }
+
+/* 9. Particle Motion */
+@keyframes animParticleMotion {
+  0% { transform: translateY(0) scale(1); opacity: 0.8; }
+  50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 0.8; }
+}
+.anim-particle-motion { animation: animParticleMotion 4s ease-in-out infinite; }
+
+/* 10. Glass Morph */
+@keyframes animGlassMorph {
+  0% { backdrop-filter: blur(15px) saturate(160%); }
+  50% { backdrop-filter: blur(35px) saturate(220%); }
+  100% { backdrop-filter: blur(15px) saturate(160%); }
+}
+.anim-glass-morph { animation: animGlassMorph 5s ease-in-out infinite; }
+
+/* 11. Smooth Widget Slide */
+@keyframes animWidgetSlideNext {
+  from { opacity: 0; transform: translateX(35px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes animWidgetSlidePrev {
+  from { opacity: 0; transform: translateX(-35px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.anim-widget-slide-next { animation: animWidgetSlideNext 0.35s var(--ease-smooth) forwards; }
+.anim-widget-slide-prev { animation: animWidgetSlidePrev 0.35s var(--ease-smooth) forwards; }
+
+/* 12. Elastic Reveal */
+@keyframes animElasticReveal {
+  0% { transform: scale(0.2); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  80% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+.anim-elastic-reveal { animation: animElasticReveal 0.65s var(--ease-spring) forwards; }
+
+/* 13. Wave Transition */
+@keyframes animWaveTransition {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.anim-wave-transition { animation: animWaveTransition 3s ease-in-out infinite; }
+
+/* 14. Gradient Flow */
+@keyframes animGradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.anim-gradient-flow {
+  background-size: 200% 200%;
+  animation: animGradientFlow 5s ease infinite;
+}
+
+/* 15. Neon Flicker */
+@keyframes animNeonFlicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 10px currentColor, 0 0 25px currentColor;
+  }
+  20%, 24%, 55% {
+    opacity: 0.3;
+    text-shadow: none;
+  }
+}
+.anim-neon-flicker { animation: animNeonFlicker 3s infinite alternate; }
+
+/* 16. Rotate Reveal */
+@keyframes animRotateReveal {
+  from { opacity: 0; transform: rotate(-15deg) scale(0.85); }
+  to { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+.anim-rotate-reveal { animation: animRotateReveal 0.5s var(--ease-spring) forwards; }
+
+/* 17. Crossfade */
+@keyframes animCrossfade {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+.anim-crossfade { animation: animCrossfade 0.4s ease-out forwards; }
+
+/* 18. Shimmer */
+@keyframes animShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.anim-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: animShimmer 2.5s infinite;
+}
+
+/* 19. Breathing Glow */
+@keyframes animBreathingGlow {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.65; }
+}
+.anim-breathing-glow { animation: animBreathingGlow 5s ease-in-out infinite; }
+
+/* 20. Parallax */
+@keyframes animParallax {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(10px, 8px); }
+  100% { transform: translate(0, 0); }
+}
+.anim-parallax { animation: animParallax 8s ease-in-out infinite; }
+
+/* 21. Liquid Ripple */
+@keyframes animLiquidRipple {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.anim-liquid-ripple {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--accent-cyan);
+  animation: animLiquidRipple 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* 22. Stagger Reveal */
+.anim-stagger-1 { animation: animSlideUp 0.5s 0.05s var(--ease-spring) backwards; }
+.anim-stagger-2 { animation: animSlideUp 0.5s 0.12s var(--ease-spring) backwards; }
+.anim-stagger-3 { animation: animSlideUp 0.5s 0.19s var(--ease-spring) backwards; }
+.anim-stagger-4 { animation: animSlideUp 0.5s 0.26s var(--ease-spring) backwards; }
+.anim-stagger-5 { animation: animSlideUp 0.5s 0.33s var(--ease-spring) backwards; }
+.anim-stagger-6 { animation: animSlideUp 0.5s 0.40s var(--ease-spring) backwards; }
+
+/* 23. Morph Transition */
+@keyframes animMorphTransition {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.05) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.anim-morph-transition { animation: animMorphTransition 6s ease-in-out infinite; }
+
+/* 24. Ambient Light */
+@keyframes animAmbientLight {
+  0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+  50% { filter: hue-rotate(45deg) brightness(1.2); }
+}
+.anim-ambient-light { animation: animAmbientLight 7s ease-in-out infinite; }
+
+/* 25. Smooth Exit */
+@keyframes animSmoothExit {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.9) translateY(-20px); }
+}
+.anim-smooth-exit { animation: animSmoothExit 0.4s var(--ease-smooth) forwards; }
+
+/* Digit Transition Engine Classes */
+/* Mode: Slide */
+.digit-slide-up {
+  animation: digitSlideUpAnim 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes digitSlideUpAnim {
+  0% { transform: translateY(40%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Mode: Fade */
+.digit-fade {
+  animation: digitFadeAnim 0.3s ease-out;
+}
+@keyframes digitFadeAnim {
+  0% { opacity: 0.2; filter: blur(4px); }
+  100% { opacity: 1; filter: blur(0px); }
+}
+
+/* Mode: Glow */
+.digit-glow-burst {
+  animation: digitGlowBurstAnim 0.4s ease-out;
+}
+@keyframes digitGlowBurstAnim {
+  0% { text-shadow: 0 0 30px #ffffff, 0 0 60px currentColor; transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* Mode: Scale */
+.digit-scale {
+  animation: digitScaleAnim 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes digitScaleAnim {
+  0% { transform: scale(0.65); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

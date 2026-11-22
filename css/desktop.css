@@ -1,0 +1,83 @@
+/**
+ * CHRONOVA - Desktop Layout & Widescreen Enhancements
+ * Created By Shiv Yogi
+ */
+
+@media screen and (min-width: 1024px) {
+  :root {
+    --clock-font-size: clamp(6rem, 15vw, 13.5rem);
+    --clock-gap: clamp(1rem, 2vw, 2.2rem);
+  }
+
+  #stage {
+    padding: 2.25rem 3rem;
+  }
+
+  #clock-container {
+    padding: 1.5rem 3rem;
+  }
+
+  .digit-slot {
+    min-width: 0.65em;
+  }
+
+  #widget-carousel {
+    padding: 0.75rem 2.2rem;
+    font-size: 1.35rem;
+  }
+
+  /* Desktop Keyboard Hints Bar */
+  .desktop-shortcuts-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .shortcut-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    font-family: var(--font-space-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-right: 4px;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-cyan);
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  .desktop-shortcuts-bar {
+    display: none !important;
+  }
+}

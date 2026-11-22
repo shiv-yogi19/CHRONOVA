@@ -1,0 +1,609 @@
+/**
+ * CHRONOVA - Main CSS
+ * Liquid Glass Digital Clock & Dynamic Wallpaper
+ * Created By Shiv Yogi
+ */
+
+:root {
+  /* Colors */
+  --bg-primary: #07080e;
+  --bg-surface: rgba(18, 22, 36, 0.65);
+  --bg-surface-elevated: rgba(28, 34, 56, 0.75);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-glass-bright: rgba(255, 255, 255, 0.25);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.45);
+  --accent-cyan: #00f2fe;
+  --accent-blue: #4facfe;
+  --accent-purple: #9b51e0;
+  --accent-glow: rgba(0, 242, 254, 0.4);
+
+  /* Clock Config Variables */
+  --clock-font-size: clamp(3.5rem, 14vw, 13rem);
+  --clock-font-weight: 700;
+  --clock-letter-spacing: 0.04em;
+  --clock-gap: clamp(0.5rem, 1.5vw, 1.5rem);
+  --clock-digit-color: #ffffff;
+  --clock-glow-color: rgba(0, 242, 254, 0.45);
+  --clock-vertical-offset: 0px;
+
+  /* Wallpaper and Filter Defaults */
+  --wallpaper-blur: 0px;
+  --wallpaper-brightness: 100%;
+  --wallpaper-opacity: 1;
+
+  /* Screen and Layout */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* Transitions */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --trans-fast: 0.2s var(--ease-smooth);
+  --trans-normal: 0.35s var(--ease-smooth);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* App Viewport Root */
+#app-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  touch-action: pan-x pan-y;
+}
+
+/* Background Layers */
+#wallpaper-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#wallpaper-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(var(--wallpaper-blur)) brightness(var(--wallpaper-brightness));
+  opacity: var(--wallpaper-opacity);
+  transition: opacity 0.5s ease;
+}
+
+#custom-wallpaper-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  filter: blur(var(--wallpaper-blur)) brightness(var(--wallpaper-brightness));
+  opacity: var(--wallpaper-opacity);
+  display: none;
+}
+
+#custom-wallpaper-img,
+#custom-wallpaper-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ambient-glow-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 60vh;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--clock-glow-color) 0%, transparent 70%);
+  opacity: 0.35;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 2;
+  transition: background 0.8s ease, opacity 0.5s ease;
+}
+
+/* Overlay Glass Layer */
+.glass-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Main Interactive Stage */
+#stage {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--safe-top) + 1.25rem) calc(var(--safe-right) + 1.5rem) calc(var(--safe-bottom) + 1.25rem) calc(var(--safe-left) + 1.5rem);
+}
+
+/* Top Status Bar */
+#top-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 20;
+}
+
+.brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  transition: var(--trans-fast);
+  cursor: pointer;
+}
+
+.brand-badge:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--border-glass-bright);
+  color: #ffffff;
+}
+
+.brand-badge svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--accent-cyan);
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.glass-pill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.glass-pill-btn:hover, .glass-pill-btn:active {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--border-glass-bright);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.glass-pill-btn.active {
+  background: rgba(0, 242, 254, 0.2);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+}
+
+.glass-pill-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Center Clock Presentation */
+#clock-presentation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  transform: translateY(var(--clock-vertical-offset));
+  transition: transform 0.4s var(--ease-smooth);
+  width: 100%;
+  max-width: 1200px;
+}
+
+#clock-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--clock-gap);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  transition: transform 0.2s ease, filter 0.3s ease;
+  will-change: transform;
+}
+
+#clock-container:hover {
+  transform: scale(1.01);
+}
+
+/* Clock Digits & Groups */
+.time-group {
+  display: flex;
+  align-items: center;
+  gap: 0.08em;
+}
+
+.digit-slot {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0.62em;
+  font-size: var(--clock-font-size);
+  font-weight: var(--clock-font-weight);
+  letter-spacing: var(--clock-letter-spacing);
+  line-height: 1;
+  color: var(--clock-digit-color);
+  text-shadow: 0 0 25px var(--clock-glow-color);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease, text-shadow 0.3s ease;
+  perspective: 600px;
+}
+
+.digit-slot:hover {
+  transform: translateY(-4px) scale(1.04);
+}
+
+.digit-slot:active {
+  transform: scale(0.96);
+}
+
+/* Colon Separators */
+.colon-slot {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: calc(var(--clock-font-size) * 0.85);
+  font-weight: var(--clock-font-weight);
+  color: var(--clock-digit-color);
+  text-shadow: 0 0 20px var(--clock-glow-color);
+  opacity: 0.9;
+  line-height: 1;
+  margin: 0 0.05em;
+  transform: translateY(-0.06em);
+}
+
+.colon-pulse {
+  animation: colonPulseAnim 1s infinite alternate ease-in-out;
+}
+
+.colon-blink {
+  animation: colonBlinkAnim 1s infinite steps(1);
+}
+
+@keyframes colonPulseAnim {
+  0% { opacity: 0.2; transform: translateY(-0.06em) scale(0.9); }
+  100% { opacity: 1; transform: translateY(-0.06em) scale(1.05); }
+}
+
+@keyframes colonBlinkAnim {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.08; }
+}
+
+/* AM / PM indicator */
+#ampm-indicator {
+  font-size: calc(var(--clock-font-size) * 0.25);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-cyan);
+  margin-left: 0.4em;
+  align-self: flex-start;
+  transform: translateY(0.25em);
+  text-shadow: 0 0 15px var(--accent-cyan);
+  transition: opacity 0.3s ease;
+}
+
+/* Seconds Group Hide Toggle */
+.seconds-hidden #colon-2,
+.seconds-hidden #seconds-group {
+  display: none !important;
+}
+
+/* Minimal Mode */
+.minimal-mode #top-bar,
+.minimal-mode #seconds-group,
+.minimal-mode #colon-2,
+.minimal-mode #ampm-indicator,
+.minimal-mode #floating-settings-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Widgets Container / Date Area */
+#widget-presentation {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  cursor: pointer;
+  z-index: 15;
+}
+
+#widget-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  border-radius: 999px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: transform 0.25s var(--ease-smooth), background 0.3s ease, border-color 0.3s ease;
+  min-width: 240px;
+}
+
+#widget-carousel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-glass-bright);
+  transform: scale(1.02);
+}
+
+.widget-card {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: clamp(0.95rem, 2vw, 1.35rem);
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.widget-card.active {
+  display: flex;
+  animation: widgetFadeIn 0.35s var(--ease-smooth) forwards;
+}
+
+.widget-card svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--accent-cyan);
+  flex-shrink: 0;
+}
+
+/* Widget Indicators (Dots) */
+.widget-indicators {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.widget-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.widget-dot.active {
+  width: 18px;
+  border-radius: 999px;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan);
+}
+
+/* Creator Branding Widget Styling */
+.branding-text-shiv-yogi {
+  font-weight: 700;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #9b51e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+}
+
+/* Bottom Bar / Shortcuts */
+#bottom-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 20;
+}
+
+.bottom-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Floating Settings Button */
+#floating-settings-btn {
+  position: fixed;
+  bottom: calc(var(--safe-bottom) + 1.25rem);
+  right: calc(var(--safe-right) + 1.25rem);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border-glass-bright);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 50;
+  transition: transform 0.3s var(--ease-spring), background 0.3s ease, box-shadow 0.3s ease;
+}
+
+#floating-settings-btn:hover {
+  transform: scale(1.1) rotate(45deg);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 40px rgba(0, 242, 254, 0.3);
+}
+
+#floating-settings-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: #ffffff;
+  transition: transform 0.4s ease;
+}
+
+/* Quick Controls Drawer (Swipe Down) */
+#quick-controls-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(12, 15, 25, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--border-glass);
+  padding: calc(var(--safe-top) + 1rem) 1.5rem 1.25rem 1.5rem;
+  z-index: 60;
+  transform: translateY(-110%);
+  transition: transform 0.4s var(--ease-smooth);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+#quick-controls-drawer.open {
+  transform: translateY(0);
+}
+
+.quick-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  border-radius: 1rem;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.quick-btn:hover, .quick-btn.active {
+  background: rgba(0, 242, 254, 0.15);
+  border-color: var(--accent-cyan);
+  color: #ffffff;
+}
+
+.quick-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+/* Quick Brightness Popup (Swipe Up) */
+#quick-brightness-modal {
+  position: fixed;
+  bottom: calc(var(--safe-bottom) + 2rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(150%);
+  width: min(90vw, 380px);
+  background: rgba(18, 22, 36, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--border-glass-bright);
+  border-radius: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  z-index: 70;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  transition: transform 0.35s var(--ease-smooth);
+}
+
+#quick-brightness-modal.open {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Screen Saver Anti-burn-in Drift Class */
+.aod-drift {
+  animation: aodDriftAnim 300s infinite alternate ease-in-out;
+}
+
+@keyframes aodDriftAnim {
+  0% { transform: translateY(var(--clock-vertical-offset)) translate(0px, 0px); }
+  25% { transform: translateY(var(--clock-vertical-offset)) translate(12px, -8px); }
+  50% { transform: translateY(var(--clock-vertical-offset)) translate(-10px, 10px); }
+  75% { transform: translateY(var(--clock-vertical-offset)) translate(8px, 6px); }
+  100% { transform: translateY(var(--clock-vertical-offset)) translate(-12px, -10px); }
+}
+
+/* Dim Mode */
+.dimmed-display {
+  filter: brightness(0.22) contrast(0.9);
+}

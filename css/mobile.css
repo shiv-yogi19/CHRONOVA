@@ -1,0 +1,157 @@
+/**
+ * CHRONOVA - Mobile Landscape-First Responsive Layout & Portrait Fallback
+ * Created By Shiv Yogi
+ */
+
+/* Portrait Mobile Handling */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --clock-font-size: clamp(3.2rem, 15vw, 5.5rem);
+    --clock-gap: 0.35rem;
+  }
+
+  #stage {
+    padding: calc(var(--safe-top) + 0.75rem) 1rem calc(var(--safe-bottom) + 1rem) 1rem;
+  }
+
+  #clock-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+  }
+
+  .time-group {
+    gap: 0.04em;
+  }
+
+  .colon-slot {
+    margin: 0 0.02em;
+  }
+
+  #widget-carousel {
+    max-width: 90vw;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Portrait Orientation Hint Pill */
+  #portrait-hint-pill {
+    display: flex !important;
+  }
+
+  #settings-modal .modal-card {
+    height: 94vh;
+    height: 94dvh;
+    width: 96vw;
+  }
+
+  .settings-layout {
+    flex-direction: column;
+  }
+
+  .settings-sidebar {
+    width: 100%;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-x: auto;
+    padding: 0.5rem;
+    gap: 0.4rem;
+  }
+
+  .settings-tab-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .settings-tab-btn span {
+    display: inline;
+  }
+
+  .settings-content-area {
+    padding: 1rem;
+  }
+
+  .quick-controls-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Landscape Mobile (Primary Mobile Target) */
+@media screen and (max-height: 540px) and (orientation: landscape) {
+  :root {
+    --clock-font-size: clamp(3rem, 18vh, 6.5rem);
+    --clock-gap: 0.75rem;
+  }
+
+  #stage {
+    padding: calc(var(--safe-top) + 0.4rem) calc(var(--safe-right) + 1rem) calc(var(--safe-bottom) + 0.4rem) calc(var(--safe-left) + 1rem);
+  }
+
+  #clock-presentation {
+    gap: 0.5rem;
+  }
+
+  #widget-presentation {
+    min-height: 44px;
+  }
+
+  #widget-carousel {
+    padding: 0.35rem 1.1rem;
+    font-size: 0.85rem;
+  }
+
+  .brand-badge {
+    padding: 0.25rem 0.7rem;
+    font-size: 0.7rem;
+  }
+
+  .glass-pill-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .glass-pill-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  #floating-settings-btn {
+    width: 42px;
+    height: 42px;
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+
+  #floating-settings-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  #portrait-hint-pill {
+    display: none !important;
+  }
+}
+
+/* Portrait Hint Banner / Pill */
+#portrait-hint-pill {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+  cursor: pointer;
+  animation: animGlowPulse 3s infinite alternate;
+}
+
+#portrait-hint-pill svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
